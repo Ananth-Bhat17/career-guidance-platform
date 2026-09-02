@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import Header from "@/components/Header";
+import AuthFormSkeleton from "@/components/AuthFormSkeleton";
 
 function LoginForm() {
   const router = useRouter();
@@ -131,13 +132,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col bg-[#fffefa] text-[#20201e] font-sans">
       <Header />
       <main className="flex-1 flex items-center justify-center p-4">
-        <Suspense
-          fallback={
-            <div className="w-full max-w-[440px] bg-white border border-[#d8d8d2] p-8 text-center text-xs text-[#585854]">
-              Loading sign in...
-            </div>
-          }
-        >
+        <Suspense fallback={<AuthFormSkeleton />}>
           <LoginForm />
         </Suspense>
       </main>
