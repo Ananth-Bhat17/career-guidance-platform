@@ -13,6 +13,11 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const displayName =
+    user.user_metadata?.full_name?.trim() ||
+    user.email?.split("@")[0] ||
+    "User";
+
   return (
     <div className="min-h-screen flex flex-col bg-[#fffefa] text-[#20201e] font-sans">
       <Header userEmail={user.email} />
@@ -25,7 +30,7 @@ export default async function DashboardPage() {
               Your Dashboard
             </span>
             <h1 className="text-2xl md:text-3xl font-serif text-[#20201e]">
-              Welcome, {user.email?.split("@")[0]}
+              Welcome, {displayName}
             </h1>
           </div>
           <div>

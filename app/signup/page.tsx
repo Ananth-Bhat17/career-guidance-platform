@@ -6,6 +6,7 @@ import { createClient } from "@/utils/supabase/client";
 import Header from "@/components/Header";
 
 export default function SignupPage() {
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -20,6 +21,10 @@ export default function SignupPage() {
     setSuccessMsg(null);
 
     // Form Validation
+    if (!fullName || !fullName.trim()) {
+      setErrorMsg("Please enter your full name.");
+      return;
+    }
     if (!email || !email.includes("@")) {
       setErrorMsg("Please enter a valid email address.");
       return;
@@ -44,6 +49,9 @@ export default function SignupPage() {
         email,
         password,
         options: {
+          data: {
+            full_name: fullName.trim(),
+          },
           emailRedirectTo: `${origin}/auth/callback`,
         },
       });
@@ -59,6 +67,7 @@ export default function SignupPage() {
           setSuccessMsg(
             "Account created successfully! Please check your email inbox to confirm your account before logging in."
           );
+          setFullName("");
           setEmail("");
           setPassword("");
           setConfirmPassword("");
@@ -105,6 +114,20 @@ export default function SignupPage() {
 
           {/* Signup Form */}
           <form onSubmit={handleSignup} className="space-y-4 font-sans">
+            <div>
+              <label className="block text-xs font-semibold uppercase tracking-wider text-[#585854] mb-1.5">
+                Full Name
+              </label>
+              <input
+                type="text"
+                required
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Name"
+                className="w-full px-3 py-2 bg-white border border-[#d8d8d2] text-[#20201e] text-sm rounded-[2px] focus:outline-none focus:border-[#285ca8] focus:ring-1 focus:ring-[#285ca8] transition-colors"
+              />
+            </div>
+
             <div>
               <label className="block text-xs font-semibold uppercase tracking-wider text-[#585854] mb-1.5">
                 Email Address
