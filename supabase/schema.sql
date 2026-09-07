@@ -49,3 +49,11 @@ create trigger set_profiles_updated_at
   before update on public.profiles
   for each row
   execute function public.handle_updated_at();
+
+-- Table Grants
+grant usage on schema public to authenticated;
+
+grant select, insert, update
+on table public.profiles
+to authenticated;
+

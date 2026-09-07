@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
 import Header from "@/components/Header";
 import SignOutButton from "./sign-out-button";
@@ -13,7 +14,22 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  // Fetch profile to verify if user has completed basic onboarding
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  // If query succeeded without error and user does not have a profile row, redirect to /onboarding
+  if (!profileError && !profile) {
+    redirect("/onboarding");
+  }
+
+  const hasProfile = !!profile;
+
   const displayName =
+    profile?.full_name?.trim() ||
     user.user_metadata?.full_name?.trim() ||
     user.email?.split("@")[0] ||
     "User";
@@ -41,15 +57,41 @@ export default async function DashboardPage() {
         {/* Profile Completion Section */}
         <div className="bg-[#f4f6f9] border border-[#d8d8d2] rounded-[2px] p-5 space-y-3">
           <div className="flex items-center justify-between text-xs font-medium text-[#20201e]">
-            <span>Profile completion status</span>
-            <span className="font-mono text-[#285ca8]">1 of 3 steps completed</span>
+            <span>Profile completion</span>
+            <span
+              className={`font-mono px-2 py-0.5 rounded-[2px] ${
+                hasProfile
+                  ? "text-[#285ca8] bg-[#285ca8]/10"
+                  : "text-amber-800 bg-amber-100 border border-amber-200"
+              }`}
+            >
+              {hasProfile ? "Basic profile completed" : "Action required"}
+            </span>
           </div>
           <div className="w-full bg-[#d8d8d2] h-1.5 rounded-[1px] overflow-hidden">
-            <div className="bg-[#285ca8] h-full w-1/3" />
+            <div
+              className={`bg-[#285ca8] h-full ${
+                hasProfile ? "w-full" : "w-0"
+              }`}
+            />
           </div>
-          <p className="text-xs text-[#585854] leading-relaxed">
-            Your account is authenticated ({user.email}). Complete your initial skill profile to generate customized career paths.
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+            <p className="text-xs text-[#585854] leading-relaxed">
+              {hasProfile
+                ? "Your basic profile details are saved. You can edit your information at any time."
+                : "Complete your basic profile to help us personalize your career guidance."}
+            </p>
+            <Link
+              href="/onboarding"
+              className={
+                hasProfile
+                  ? "inline-flex items-center gap-1 text-xs font-medium text-[#285ca8] hover:underline shrink-0"
+                  : "inline-flex items-center gap-1 text-xs font-medium bg-[#1e437e] hover:bg-[#163565] text-white px-3.5 py-1.5 rounded-[2px] transition-colors shrink-0"
+              }
+            >
+              {hasProfile ? "Edit profile \u2192" : "Complete your profile \u2192"}
+            </Link>
+          </div>
         </div>
 
         {/* Next Step Section: Start with your skills */}
