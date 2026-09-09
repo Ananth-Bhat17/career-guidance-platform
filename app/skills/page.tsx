@@ -109,8 +109,10 @@ export default function SkillsPage() {
   // Client-side search filtering & category grouping
   const groupedSkills = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    const filtered = skills.filter((s) =>
-      s.name.toLowerCase().includes(query)
+    const filtered = skills.filter(
+      (s) =>
+        s.name.toLowerCase().includes(query) ||
+        s.category.toLowerCase().includes(query)
     );
 
     const categoriesMap = new Map<string, Skill[]>();
