@@ -106,9 +106,12 @@ export default async function DashboardPage() {
           </div>
 
           <div className="pt-2">
-            <button className="bg-[#1e437e] hover:bg-[#163565] text-white text-xs font-medium px-4 py-2 rounded-[2px] transition-colors cursor-pointer">
+            <Link
+              href="/skills"
+              className="inline-block bg-[#1e437e] hover:bg-[#163565] text-white text-xs font-medium px-4 py-2 rounded-[2px] transition-colors cursor-pointer"
+            >
               Begin skill assessment &rarr;
-            </button>
+            </Link>
           </div>
         </div>
       </main>
