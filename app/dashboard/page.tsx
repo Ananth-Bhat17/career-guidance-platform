@@ -28,6 +28,25 @@ export default async function DashboardPage() {
 
   const hasProfile = !!profile;
 
+  // Fetch user_skills count to check skills assessment completion
+  let skillsCount = 0;
+  try {
+    const { count, error: skillsError } = await supabase
+      .from("user_skills")
+      .select("*", { count: "exact", head: true })
+      .eq("user_id", user.id);
+
+    if (skillsError) {
+      console.error("Error fetching user skills count:", skillsError);
+    } else {
+      skillsCount = count ?? 0;
+    }
+  } catch (err) {
+    console.error("Unexpected error fetching user skills count:", err);
+  }
+
+  const hasSkills = skillsCount > 0;
+
   const displayName =
     profile?.full_name?.trim() ||
     user.user_metadata?.full_name?.trim() ||
@@ -98,10 +117,12 @@ export default async function DashboardPage() {
         <div className="bg-white border border-[#d8d8d2] rounded-[2px] p-6 space-y-4">
           <div>
             <h2 className="text-lg font-serif font-semibold text-[#20201e] mb-1">
-              Start with your skills
+              {hasSkills ? "Your skills" : "Build your skill profile"}
             </h2>
             <p className="text-sm text-[#585854] leading-relaxed">
-              Identify your current technical and analytical abilities to receive tailored career directions, structured learning roadmaps, and targeted opportunities.
+              {hasSkills
+                ? `You\u2019ve added ${skillsCount} ${skillsCount === 1 ? "skill" : "skills"} to your profile.`
+                : "Add your technical and professional skills to help us personalize your career recommendations."}
             </p>
           </div>
 
@@ -110,7 +131,7 @@ export default async function DashboardPage() {
               href="/skills"
               className="inline-block bg-[#1e437e] hover:bg-[#163565] text-white text-xs font-medium px-4 py-2 rounded-[2px] transition-colors cursor-pointer"
             >
-              Begin skill assessment &rarr;
+              {hasSkills ? "Edit skills \u2192" : "Begin skill assessment \u2192"}
             </Link>
           </div>
         </div>
