@@ -284,12 +284,12 @@ export default async function DashboardPage() {
                         </div>
 
                         <div className="pt-1 flex justify-end">
-                          <span
-                            className="text-xs font-medium text-[#585854] opacity-75 cursor-not-allowed inline-flex items-center gap-1"
-                            title="Career details page coming soon"
+                          <Link
+                            href={`/careers/${rec.id}`}
+                            className="text-xs font-medium text-[#285ca8] hover:underline inline-flex items-center gap-1"
                           >
                             View career &rarr;
-                          </span>
+                          </Link>
                         </div>
                       </div>
                     );
